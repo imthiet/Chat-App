@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context=".ChatApp.ChatList">
+
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/etFr"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="64dp"
+        android:backgroundTint="@color/purple_200"
+        android:hint="Find Friend"
+        android:textColor="@color/white"
+        android:textColorHint="@color/gray"
+        android:textSize="20dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnFind"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnFind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/etFr"
+        app:layout_constraintBottom_toBottomOf="@+id/etFr"
+        android:text="Find"
+        android:backgroundTint="@color/purple_200"
+        android:textColor="@color/white"/>
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/etFr"
+        app:layout_constraintBottom_toTopOf="@+id/listView_list"
+        android:text="Chat list"
+        android:textColor="@color/white"
+        android:textAlignment="center"
+        />
+    <ListView
+        android:id="@+id/listView_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintTop_toBottomOf="@+id/etFr"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp"
+
+
+
+        android:layout_marginTop="20dp"
+
+        tools:listitem="@layout/custom_list_view"
+
+        tools:ignore="MissingConstraints"
+        />
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+
+
+        android:background="@drawable/bt_background"
+        android:elevation="2dp"
+        app:itemIconSize="25dp"
+
+        app:itemIconTint="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/bottom_menu"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="16dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>
