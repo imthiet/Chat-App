@@ -38,7 +38,7 @@ public class ChatList extends AppCompatActivity {
     Button btnF;
 
 
-    String URL = "http://10.0.2.2/LoginRegister/retrieve.php";
+    String URL = "http://10.0.2.2/localhost/retrieve.php";
     public static ArrayList<User>usersArrayList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -33,21 +33,8 @@ class ChatActivity : AppCompatActivity() {
         setContentView(binding.root)
         socketHandler = SocketHandler()
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        val Image = findViewById<ImageView>(R.id.floatingIcon)
-        bottomNavigationView.visibility = View.INVISIBLE
-      Image.setOnClickListener()
-      {
-          if (bottomNavigationView.isShown) {
-              bottomNavigationView.visibility = View.GONE
-              val slideInAnimation =
-                  AnimationUtils.loadAnimation(this@ChatActivity, R.anim.menu_disappear)
-              bottomNavigationView.startAnimation(slideInAnimation)
-          } else {
-              bottomNavigationView.visibility = View.VISIBLE
-              val slideInAnimation = AnimationUtils.loadAnimation(this@ChatActivity, R.anim.menu_appear)
-              bottomNavigationView.startAnimation(slideInAnimation)
-          }
-      }
+
+
         bottomNavigationView.selectedItemId = R.id.act
 
         bottomNavigationView.setOnItemSelectedListener { item: MenuItem ->

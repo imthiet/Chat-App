@@ -27,6 +27,7 @@ import com.example.chatapp.Fragment.ChatFragment;
 import com.example.chatapp.Login_SignUp.SignUp;
 import com.example.chatapp.R;
 
+import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
@@ -42,7 +43,7 @@ import javax.net.ssl.X509TrustManager;
 public class Login extends AppCompatActivity {
 
     private Intent intent;
-    private String URL = "http://10.0.2.2/LoginRegister/login.php";
+    private String URL = "http://10.0.2.2/localhost/login.php";
     String usn,pwd,crossUsn;
 
     private EditText usn_edit,pwd_edit;
@@ -107,6 +108,22 @@ public class Login extends AppCompatActivity {
                                 public void onErrorResponse(VolleyError error) {
                                     Toast.makeText(Login.this,error.toString(),Toast.LENGTH_SHORT).show();
                                     error.printStackTrace();
+                                    if (error == null || error.networkResponse == null) {
+                                        return;
+                                    }
+
+                                    String body;
+                                    //get status code here
+                                    final String statusCode = String.valueOf(error.networkResponse.statusCode);
+                                    //get response body and parse with appropriate encoding
+                                    try {
+                                        body = new String(error.networkResponse.data,"UTF-8");
+                                        Toast.makeText(Login.this,body,Toast.LENGTH_SHORT).show();
+                                        System.out.println(body);
+                                    } catch (UnsupportedEncodingException e) {
+                                        // exception
+                                    }
+
 
                                 }
 

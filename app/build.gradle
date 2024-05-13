@@ -67,4 +67,6 @@ dependencies {
 
     //httpgit
     implementation 'com.android.volley:volley:1.2.1'
+    //image up
+    implementation 'com.karumi:dexter:6.0.2'
 }
