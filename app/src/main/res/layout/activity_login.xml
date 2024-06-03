@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ChatApp.Login"
 
-    android:background="@drawable/bgr4"
+    android:background="@drawable/login_bgr"
     >
 
     <Button
@@ -75,6 +75,7 @@
 
     <EditText
         android:id="@+id/usn_edt"
+        android:inputType="textPassword"
         android:layout_width="338dp"
         android:layout_height="64dp"
         android:layout_marginTop="60dp"
@@ -88,6 +89,7 @@
 
     <EditText
         android:id="@+id/pwd_edt"
+        android:background="@drawable/border_style"
         android:layout_width="344dp"
         android:layout_height="58dp"
         android:layout_marginTop="16dp"

@@ -1,19 +1,26 @@
 package com.example.chatapp.ChatApp;
 
-import static android.app.ProgressDialog.show;
-
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -30,138 +37,216 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChatList extends AppCompatActivity {
     ListView listView;
     Chat_list_adapter adapter;
-    TextView etFr,label;
+    ImageView avatar;
+    TextView etFr, label;
     Button btnF;
+    User user;
+    String usn;
+    String URL = "http://10.0.2.2/API/findF.php";
+    String URL2 = "http://10.0.2.2/API/chatlist.php";
+    public static ArrayList<User> usersArrayList = new ArrayList<>();
 
-
-    String URL = "http://10.0.2.2/localhost/retrieve.php";
-    public static ArrayList<User>usersArrayList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_get);
+
         etFr = findViewById(R.id.etFr);
         btnF = findViewById(R.id.btnFind);
         label = findViewById(R.id.label);
         listView = findViewById(R.id.listView_list);
+
+        adapter = new Chat_list_adapter(this, usersArrayList);
+        listView.setAdapter(adapter);
+        SharedPreferences preferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
+        usn = preferences.getString("usnLogin", "");
+
+        getData();
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setSelectedItemId(R.id.act);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
-            switch (item.getItemId())
-            {
-
+            switch (item.getItemId()) {
                 case R.id.chat:
+                    startActivity(new Intent(getApplicationContext(), ChatList.class));
+                    overridePendingTransition(R.anim.slide_in_rigth, R.anim.slide_out_left);
+                    finish();
                     return true;
                 case R.id.act:
                     startActivity(new Intent(getApplicationContext(), ProFile.class));
-                    overridePendingTransition(R.anim.slide_in_rigth,R.anim.slide_out_left);
+                    overridePendingTransition(R.anim.slide_in_rigth, R.anim.slide_out_left);
                     finish();
-
                     return true;
                 case R.id.other:
                     startActivity(new Intent(getApplicationContext(), Setting.class));
-                    overridePendingTransition(R.anim.slide_in_rigth,R.anim.slide_out_left);
+                    overridePendingTransition(R.anim.slide_in_rigth, R.anim.slide_out_left);
                     finish();
-
                     return true;
-
             }
             return false;
         });
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                User itemValue = (User) listView.getItemAtPosition(position);
 
-//            adapter = new Chat_list_adapter(this,usersArrayList);
-//            listView.setAdapter(adapter);
-//            retrieveData();
-            Toast.makeText(ChatList.this,"Cheked",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(ChatList.this, ChatActivity.class);
+                intent.putExtra("username", usn);
+                intent.putExtra("othername", itemValue.getName());
+                startActivity(intent);
+            }
+        });
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                User itemValue = (User) listView.getItemAtPosition(position);
+
+                // Hiển thị AlertDialog xác nhận xóa
+                new AlertDialog.Builder(ChatList.this)
+                        .setTitle("View Profile")
+                        .setMessage("View Profile "+itemValue.getName().toString()+ "?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                Intent intent_profile = new Intent(ChatList.this, ProFile.class);
+                                intent_profile.putExtra("username", itemValue.getName());
+                                startActivity(intent_profile);
+                            }
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
+
+                return true;
+            }
+        });
 
         etFr.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    // EditText được focus
                     btnF.setText("Cancel");
-                    label.setText("Result");
-//                    editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//                        @Override
-//                        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//                            if (actionId == EditorInfo.IME_ACTION_DONE || event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-//                                // Xử lý khi người dùng nhấn phím "Enter"
-//                                return true;
-//                            }
-//                            return false;
-//                        }
-//                    });
-
-                    btnF.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            etFr.setText("");
-                            etFr.clearFocus();
-                            label.setText("Chat list");
-                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                        }
-                    });
-                } else {
-
-                    btnF.setText("Find");
+                    getFData();
                 }
             }
         });
 
-       
-
-    }
-
-    public void retrieveData()
-    {
-        StringRequest request = new StringRequest(Request.Method.POST, URL
-                , new Response.Listener<String>() {
+        btnF.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onResponse(String response) {
-                usersArrayList.clear();
-                try {
-                    JSONObject jsonObject= new JSONObject(response);
-                    String success = jsonObject.getString("success");
-                    JSONArray jsonArray = jsonObject.getJSONArray("data");
-                    if(success.equals("1"))
-                    {
-                        for(int i = 0;i < jsonArray.length();i++)
-                        {
-                            JSONObject object= jsonArray.getJSONObject(i);
-                            String fn = object.getString("fn");
-                            String nn = object.getString("usn");
-                            String password = object.getString("pwd");
-                            String dob = object.getString("dob");
-                            String hobby = object.getString("hobby");
+            public void onClick(View v) {
+                etFr.clearFocus();
+                etFr.setText("");
+                getData();
+            }
+        });
 
-                            User new_user = new User(nn,"",fn,dob,hobby);
-                            //User new_user = new User("quang","thiet","quang thiet","13/7/2003","codeing");
-                            usersArrayList.add(new_user);
-                            adapter.notifyDataSetChanged();
+        etFr.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-                        }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                ArrayList<User> filteredList = new ArrayList<>();
+                for (User u : usersArrayList) {
+                    if (u.getName().toLowerCase().contains(s.toString().toLowerCase())) {
+                        filteredList.add(u);
                     }
                 }
-                catch (JSONException e)
-                {
-                    e.printStackTrace();
-                }
+                adapter.updateData(filteredList);
+            }
 
-            }
-        }, new Response.ErrorListener() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-                //Toast.makeText(testGet.this,error.toString(),Toast.LENGTH_SHORT).show();
-              error.printStackTrace();
-            }
+            public void afterTextChanged(Editable s) {}
         });
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(request);
     }
+
+    public void getData() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL2,
+                response -> {
+                    usersArrayList.clear();
+                    try {
+                        Log.i("tagconvertstr", "[" + response + "]");
+                        JSONArray jsonArray = new JSONArray(response);
+
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            String name = jsonObject.getString("Username");
+                            String avatarUrl = jsonObject.getString("avatar");
+
+                            if (!avatarUrl.isEmpty()) {
+                                avatarUrl = "http://10.0.2.2/API/Images/" + avatarUrl;
+                            }
+
+                            user = new User(name, "", "", "", "", avatarUrl);
+                            usersArrayList.add(user);
+                        }
+                        adapter.notifyDataSetChanged();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                },
+                error -> {
+                    error.printStackTrace();
+                    Toast.makeText(ChatList.this, "Error: " + error.toString(), Toast.LENGTH_LONG).show();
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("nameF", usn);
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(ChatList.this);
+        requestQueue.add(stringRequest);
+    }
+
+    public void getFData() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL,
+                response -> {
+                    try {
+                        Log.i("tagconvertstr", "[" + response + "]");
+                        JSONArray jsonArray = new JSONArray(response);
+
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            String name = jsonObject.getString("Username");
+                            String avatarUrl = jsonObject.getString("avatar");
+
+                            if (!avatarUrl.isEmpty()) {
+                                avatarUrl = "http://10.0.2.2/API/Images/" + avatarUrl;
+                            }
+
+                            user = new User(name, "", "", "", "", avatarUrl);
+                            usersArrayList.add(user);
+                        }
+                        adapter.notifyDataSetChanged();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                },
+                error -> {
+                    error.printStackTrace();
+                    Toast.makeText(ChatList.this, "Error: " + error.toString(), Toast.LENGTH_LONG).show();
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("nameF", etFr.getText().toString().trim());
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(ChatList.this);
+        requestQueue.add(stringRequest);
+    }
+
+
 }

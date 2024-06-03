@@ -1,4 +1,4 @@
-package com.example.chatapp.Login_SignUp;
+package com.example.chatapp.ChatApp;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,17 +18,16 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.chatapp.ChatApp.Login;
 import com.example.chatapp.R;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class SignUp extends AppCompatActivity {
-    private EditText usn_edt,nn_edt,pwd_edt,re_pwd;
-    private Button btn_signup;
-    private String URL = "http://10.0.2.2/LoginRegister/signup.php";
-    String usn,nn,pwd,repwd;
+     EditText usn_edt,fn_edt,pwd_edt,re_pwd,hb_edt,dob_edt;
+     Button btn_signup;
+     String URL = "http://10.0.2.2/API/signup.php";
+    String usn_get,fn_get,pwd_get,hb_str,dob_str,re_pwd_str;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -36,11 +35,13 @@ public class SignUp extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
 
         usn_edt = findViewById(R.id.usn_edt);
-        nn_edt = findViewById(R.id.cfm_edit);
+        fn_edt = findViewById(R.id.fullname_edt);
         pwd_edt = findViewById(R.id.pwd_edt);
-        re_pwd = findViewById(R.id.nn_edt);
+        re_pwd = findViewById(R.id.retype_pwd_edt);
         btn_signup = findViewById(R.id.signup_btn);
-        usn = nn = pwd = repwd = "";
+        hb_edt= findViewById(R.id.hobby_edt);
+        dob_edt = findViewById(R.id.dob_edt);
+        ;
 
 
         TextView to_login = findViewById(R.id.to_login);
@@ -54,27 +55,34 @@ public class SignUp extends AppCompatActivity {
         btn_signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                usn = usn_edt.getText().toString().trim();
-                nn = nn_edt.getText().toString().trim();
-                pwd = pwd_edt.getText().toString().trim();
-                repwd = re_pwd.getText().toString().trim();
-                if(!pwd.equals(repwd))
+                usn_get = usn_edt.getText().toString().trim();
+                fn_get = fn_edt.getText().toString().trim();
+                pwd_get = pwd_edt.getText().toString().trim();
+                re_pwd_str = re_pwd.getText().toString().trim();
+                hb_str = hb_edt.getText().toString().trim();
+                dob_str=dob_edt.getText().toString().trim();
+
+                if(!pwd_get.equals(re_pwd_str))
                 {
                     Toast.makeText(SignUp.this,"not Match Password",Toast.LENGTH_SHORT).show();
-                } else if (!usn.equals("") && !nn.equals("") && !pwd.equals("")) {
+                } else if (!usn_get.equals("") && !fn_get.equals("") && !pwd_get.equals("")) {
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, URL,
                             new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String response) {
-                                    if(response.equals("success")){
+                                    if(response.trim().equals("success")){
                                         Toast.makeText(SignUp.this,"Sign Up Successfull!",Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(SignUp.this, Login.class);
+                                        startActivity(intent);
+
                                     }
-                                    else if (response.equals("failure"))
+                                    else if (response.trim().equals("failure"))
                                     {
-                                        Toast.makeText(SignUp.this,"Fail to Sign Up!",Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(SignUp.this,"Fail to Sign Up! UserName Existed",Toast.LENGTH_SHORT).show();
                                     }
                                     else {
                                         Toast.makeText(SignUp.this,response,Toast.LENGTH_SHORT).show();
+                                        System.out.println(response);
                                     }
                                 }
                             },
@@ -93,9 +101,11 @@ public class SignUp extends AppCompatActivity {
                         @Override
                         protected Map<String, String> getParams() throws AuthFailureError {
                             Map<String,String> data = new HashMap<>();
-                            data.put("username",usn);
-                            data.put("password",pwd);
-                            data.put("fullname",nn);
+                            data.put("username",usn_get);
+                            data.put("password",pwd_get);
+                            data.put("fullname",fn_get);
+                            data.put("dob",dob_str);
+                            data.put("hb",hb_str);
 
                             return data;
                         }

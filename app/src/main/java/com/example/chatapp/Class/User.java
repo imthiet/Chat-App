@@ -2,19 +2,29 @@ package com.example.chatapp.Class;
 
 public class User {
     String name,password,fn,dob,interes;
+    String UrlImg;
 
 
-    public User(String name, String password, String fn, String dob, String interes ) {
+    public User(String name, String password, String fn, String dob, String interes,String urlImg ) {
         this.name = name;
         this.password = password;
         this.fn = fn;
         this.dob = dob;
         this.interes = interes;
+        this.UrlImg = urlImg;
 
     }
 
+    public String getUrlImg() {
+        return UrlImg;
+    }
+
+    public void setUrlImg(String urlImg) {
+
+        this.UrlImg = UrlImg;
+    }
     public String getName() {
-        return "Name: "+name;
+        return name;
     }
 
     public void setName(String name) {

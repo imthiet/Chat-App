@@ -2,7 +2,6 @@ package com.example.chatapp.ChatApp;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -23,8 +22,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import com.example.chatapp.Fragment.ChatFragment;
-import com.example.chatapp.Login_SignUp.SignUp;
 import com.example.chatapp.R;
 
 import java.io.UnsupportedEncodingException;
@@ -43,7 +40,7 @@ import javax.net.ssl.X509TrustManager;
 public class Login extends AppCompatActivity {
 
     private Intent intent;
-    private String URL = "http://10.0.2.2/localhost/login.php";
+    private String URL = "http://10.0.2.2/API/login.php";
     String usn,pwd,crossUsn;
 
     private EditText usn_edit,pwd_edit;
@@ -79,16 +76,18 @@ public class Login extends AppCompatActivity {
                                 @Override
                                 public void onResponse(String response) {
                                     if(response.trim().equals("success")){
-                                        Intent intent_login = new Intent(Login.this, ProFile.class);
-                                        intent_login.putExtra("username", usn);
+
                                         // Lưu tên người dùng khi đăng nhập thành công
 
+                                        System.out.println(usn);
 
-                                        startActivity(intent_login);
                                         SharedPreferences preferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE);
                                         SharedPreferences.Editor editor = preferences.edit();
-                                        editor.putString("usn", usn);
+                                        editor.putString("usnLogin", usn);
                                         editor.apply();
+                                        Intent intent = new Intent(Login.this, ProFile.class);
+                                        startActivity(intent);
+
 
 
                                     }
@@ -108,6 +107,7 @@ public class Login extends AppCompatActivity {
                                 public void onErrorResponse(VolleyError error) {
                                     Toast.makeText(Login.this,error.toString(),Toast.LENGTH_SHORT).show();
                                     error.printStackTrace();
+                                    System.out.println(error.getMessage());
                                     if (error == null || error.networkResponse == null) {
                                         return;
                                     }
@@ -134,8 +134,8 @@ public class Login extends AppCompatActivity {
                         @Override
                         protected Map<String, String> getParams() throws AuthFailureError {
                             Map<String,String> data = new HashMap<>();
-                            data.put("Username",usn);
-                            data.put("Password",pwd);
+                            data.put("username",usn);
+                            data.put("password",pwd);
 
                             return data;
                         }

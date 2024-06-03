@@ -1,21 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="5dp"
-    >
+    android:layout_height="wrap_content"
+    android:padding="5dp">
+
+    <ImageView
+        android:id="@+id/avatar"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/circle_bor"
+        android:contentDescription="Task Icon"/>
+
     <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="60dp"
         android:id="@+id/chatBox_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/avatar"
+        android:layout_toRightOf="@id/avatar"
         android:gravity="center_vertical"
         android:layout_marginBottom="2dp"
-        android:textSize="17sp"
-        android:textColor="@color/white"
+        android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
+        android:textSize="23sp"
+        android:textColor="@color/white"
+
         android:background="@drawable/border_style"
-
-        />
-
-</LinearLayout>
+        android:text="NameUSer"/>
+</RelativeLayout>
